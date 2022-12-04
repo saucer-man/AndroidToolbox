@@ -10,29 +10,15 @@ import (
 )
 
 // 测试某个命令是否存在
-func CheckExists(binName string) {
-	path, err := exec.LookPath(binName)
+func CheckExists(binName string) bool {
+	_, err := exec.LookPath(binName)
 	if err != nil {
-		log.Fatal("didn't find 'adb' executable\n")
-	} else {
-		log.Info("'adb' executable is in '%s'\n", path)
-	}
-}
 
-// 带有outStr和errStr的命令执行
-func Exex(command string, args ...string) (string, string) {
-	cmd := exec.Command(command, args...)
-	var stdin, stdout, stderr bytes.Buffer
-	cmd.Stdin = &stdin
-	cmd.Stdout = &stdout
-	cmd.Stderr = &stderr
-	err := cmd.Run()
-	if err != nil {
-		log.Fatalf("cmd.Run() failed with %s\n", err)
+		return false
+	} else {
+		return true
+
 	}
-	outStr, errStr := stdout.String(), stderr.String()
-	log.Info("out:\n%s\nerr:\n%s\n", outStr, errStr)
-	return outStr, errStr
 }
 
 // 带有outStr和errStr和exitCode的命令执行

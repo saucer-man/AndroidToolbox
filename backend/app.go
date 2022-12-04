@@ -4,10 +4,10 @@ import (
 	"bufio"
 	"bytes"
 	"context"
+	"fmt"
 	"os"
 	"os/exec"
 	"strings"
-	"syscall"
 
 	"github.com/elliotchance/orderedmap/v2"
 
@@ -32,8 +32,8 @@ func (a *App) Startup(ctx context.Context) {
 
 // 获取手机的一些信息
 func (a *App) GetDeviceList() []string {
-	out, err := Exex("adb", "devices", "-l")
-	log.Info("adb devices命令返回错误结果: %s", err)
+	out, _, _ := RunCommand("adb", "devices", "-l")
+
 	var devices []string
 	log.Info("adb devices命令返回结果: %s", out)
 	sc := bufio.NewScanner(strings.NewReader(out))
@@ -55,6 +55,11 @@ type DeviceProp struct {
 	Name  string
 	Value string
 	Mean  string
+}
+type ExcuteResult struct {
+	Stdout   string
+	Stderr   string
+	ExitCode int
 }
 
 func (a *App) GetDeviceProp() DevicePropList {
@@ -112,53 +117,51 @@ func (a *App) GetDeviceProp() DevicePropList {
 }
 
 // 同步执行命令
-func (a *App) Excute(command string) (exitCode int) {
+func (a *App) Excute(command string) ExcuteResult {
+	excuteResult := ExcuteResult{
+		Stdout:   "",
+		Stderr:   "",
+		ExitCode: 0,
+	}
 	args := strings.Split(command, " ")
 	name := args[0]
 	args = args[1:]
-	log.Info("run command:", name, args)
-	var outbuf, errbuf bytes.Buffer
-	cmd := exec.Command(name, args...)
-	cmd.Stdout = &outbuf
-	cmd.Stderr = &errbuf
-
-	err := cmd.Run()
-	stdout := outbuf.String()
-	stderr := errbuf.String()
-
-	if err != nil {
-		// try to get the exit code
-		if exitError, ok := err.(*exec.ExitError); ok {
-			ws := exitError.Sys().(syscall.WaitStatus)
-			exitCode = ws.ExitStatus()
-		} else {
-			// This will happen (in OSX) if `name` is not available in $PATH,
-			// in this situation, exit code could not be get, and stderr will be
-			// empty string very likely, so we use the default fail code, and format err
-			// to string and set to stderr
-			log.Infof("Could not get exit code for failed program: %v, %v", name, args)
-			exitCode = 0
-			if stderr == "" {
-				stderr = err.Error()
-			}
-		}
-	} else {
-		// success, exitCode should be 0 if go is ok
-		ws := cmd.ProcessState.Sys().(syscall.WaitStatus)
-		exitCode = ws.ExitStatus()
+	// 先检查命令是否存在
+	if !CheckExists(name) {
+		log.Errorf("didn't find '%s' executable\n", name)
+		excuteResult.Stderr = fmt.Sprintf("%s 未安装", name)
+		excuteResult.ExitCode = 1
+		return excuteResult
 	}
-	log.Printf("command result, stdout: %v, stderr: %v, exitCode: %v", stdout, stderr, exitCode)
-	return
+	stdout, stderr, exitCode := RunCommand(name, args...)
+
+	excuteResult.Stdout = stdout
+	excuteResult.Stderr = stderr
+	excuteResult.ExitCode = exitCode
+	return excuteResult
 }
 
 // 异步执行命令
-func (a *App) ExcuteSync(command string) {
+func (a *App) ExcuteSync(command string) ExcuteResult {
+	excuteResult := ExcuteResult{
+		Stdout:   "",
+		Stderr:   "",
+		ExitCode: 0,
+	}
 	args := strings.Split(command, " ")
 	name := args[0]
 	args = args[1:]
 	log.Info("run command:", name, args)
+	// 先检查命令是否存在
+	if !CheckExists(name) {
+		log.Errorf("didn't find '%s' executable\n", name)
+		excuteResult.Stderr = fmt.Sprintf("%s 未安装", name)
+		excuteResult.ExitCode = 1
+		return excuteResult
+	}
 	cmd := exec.Command(name, args...)
 	cmd.Start()
+	return excuteResult
 }
 
 // GetImage 直接读取adb截图数据，速度更快

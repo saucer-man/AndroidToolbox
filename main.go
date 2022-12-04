@@ -13,8 +13,6 @@ import (
 var assets embed.FS
 
 func main() {
-	// 检查adb是否存在
-	app.CheckExists("adb")
 
 	// Create an instance of the app structure
 	app := app.NewApp()

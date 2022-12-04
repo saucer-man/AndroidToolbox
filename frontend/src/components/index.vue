@@ -105,7 +105,9 @@ export default {
       console.log("下面是tables"),
       console.log(this.tableData)
     ))
+    // ExcuteTest("adb shell ls -F /storage/emulated/0/").then({
 
+    // })
   },
   methods: {
     return1: function () {
@@ -158,7 +160,7 @@ export default {
     },
     scrcpy: function () {
       ExcuteSync("scrcpy").then((result) => (
-        ElMessage.success("投屏命令执行完毕")
+        this.handleCommandResult(result)
       )
       )
     },
@@ -186,11 +188,12 @@ export default {
       }
       )
     },
-    handleCommandResult: function (exitCode) {
-      if (exitCode == 0) {
+    handleCommandResult: function (execResult) {
+      console.log("handleCommandResult返回值:",execResult)
+      if (execResult.ExitCode == 0) {
         ElMessage.success("命令执行成功")
       } else {
-        ElMessage.success("命令执行出错")
+        ElMessage.success("命令执行出错: "+execResult.Stderr)
       }
     }
   },
