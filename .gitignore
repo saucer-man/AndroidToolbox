@@ -1,0 +1,8 @@
+build/
+node_modules
+frontend/dist
+test/
+log/
+screenshot/
+dist
+
