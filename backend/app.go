@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"regexp"
 	"strings"
 
 	"github.com/elliotchance/orderedmap/v2"
@@ -164,7 +165,7 @@ func (a *App) ExcuteSync(command string) ExcuteResult {
 	return excuteResult
 }
 
-// GetImage 直接读取adb截图数据，速度更快
+// GetImage 获取adb截图数据，速度更快
 func (a *App) GetImage() (exitCode int) {
 	out, _, exitCode := RunCommand("adb", "shell", "screencap", "-p")
 	x := bytes.Replace([]byte(out), []byte("\r\n"), []byte("\n"), -1)
@@ -174,4 +175,68 @@ func (a *App) GetImage() (exitCode int) {
 	}
 
 	return exitCode
+}
+
+type ListFileRes struct {
+	FilesList FilesList
+	StdErr    string
+}
+
+type FilesList struct {
+	FilesList []FileInfo
+	Dir       string
+}
+
+type FileInfo struct {
+	// 结构可以参考https://blog.csdn.net/deniece1/article/details/102770824
+	Permition  string
+	SubCount   string
+	Uid        string
+	Gid        string
+	Size       string
+	ModifyDate string
+	Filename   string
+}
+
+// 获取某个路径的文件信息
+func (a *App) ListPath(path string) ListFileRes {
+	listFileRes := ListFileRes{
+		FilesList: FilesList{
+			FilesList: []FileInfo{},
+			Dir:       path,
+		},
+		StdErr: "",
+	}
+
+	stdOut, stdErr, exitCode := RunCommand("adb", "shell", "ls", "-la", path)
+	if exitCode != 0 {
+		log.Errorf("执行命令 adb shell ls -la %s 出错%s", path, stdErr)
+		listFileRes.StdErr = stdErr
+		return listFileRes
+	}
+
+	sc := bufio.NewScanner(strings.NewReader(stdOut))
+	for sc.Scan() {
+		line := sc.Text()
+		if strings.HasPrefix(line, "total") {
+			continue
+		}
+		log.Debugf("每一行的输出为：%s", line)
+
+		r := regexp.MustCompile(`(.+?) {1,10}(\d+?) {1,10}([a-z]+?) {1,10}(.+?) {1,10}(.+?) {1,10}(.+? .+?) (.+)`)
+
+		matchs := r.FindStringSubmatch(line)
+		var fileInfo FileInfo = FileInfo{
+			Permition:  matchs[1],
+			SubCount:   matchs[2],
+			Uid:        matchs[3],
+			Gid:        matchs[4],
+			Size:       matchs[5],
+			ModifyDate: matchs[6],
+			Filename:   matchs[7],
+		}
+		listFileRes.FilesList.FilesList = append(listFileRes.FilesList.FilesList, fileInfo)
+	}
+	return listFileRes
+
 }

@@ -11,3 +11,5 @@ export function GetDeviceList():Promise<Array<string>>;
 export function GetDeviceProp():Promise<app.DevicePropList>;
 
 export function GetImage():Promise<number>;
+
+export function ListPath(arg1:string):Promise<app.ListFileRes>;

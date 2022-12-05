@@ -3,6 +3,7 @@ import { createRouter, createWebHashHistory, createWebHistory } from "vue-router
 // 1. 定义路由组件， 注意，这里一定要使用 文件的全名（包含文件后缀名）
 import index from "../components/index.vue";
 import helloworld from "../components/HelloWorld.vue";
+import filemanager from "../components/FileManager.vue";
 // 2. 定义路由配置
 const routes = [
   {
@@ -21,6 +22,11 @@ const routes = [
     path: "/helloworld", 
     name: 'helloworld',
     component: helloworld
+  },
+  { 
+    path: "/filemanager", 
+    name: 'filemanager',
+    component: filemanager
   },
 ];
 

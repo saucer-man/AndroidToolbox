@@ -19,3 +19,4 @@ wails doctor
 wails build -upx
 ```
 
+and you can use `wails dev` to debug

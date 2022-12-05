@@ -6,8 +6,8 @@
       <el-menu default-active="index" class="el-menu-vertical-demo" router=true>
         <el-menu-item index="/index">主页</el-menu-item>
         <el-menu-item index="/helloworld">软件管理</el-menu-item>
-        <el-menu-item index="/execute_command">文件管理</el-menu-item>
-        <el-menu-item index="/special_operation"> 专用操作</el-menu-item>
+        <el-menu-item index="/filemanager">文件管理</el-menu-item>
+
       </el-menu>
     </el-aside>
     <router-view v-slot="{ Component }">
