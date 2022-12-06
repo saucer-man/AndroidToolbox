@@ -15,7 +15,7 @@ const routes = [
     name: 'index',
     component: index,
     meta: {
-      keepAlive: true   // 需要缓存
+      keepAlive: false   // 不需要缓存
     }
   },
   { 

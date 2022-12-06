@@ -223,7 +223,7 @@ func (a *App) ListPath(path string) ListFileRes {
 		}
 		log.Debugf("每一行的输出为：%s", line)
 
-		r := regexp.MustCompile(`(.+?) {1,10}(\d+?) {1,10}([a-z]+?) {1,10}(.+?) {1,10}(.+?) {1,10}(.+? .+?) (.+)`)
+		r := regexp.MustCompile(`(.+?) {1,10}(\d+?) {1,10}(.+?) {1,10}(.+?) {1,10}(.+?) {1,10}(.+? .+?) (.+)`)
 
 		matchs := r.FindStringSubmatch(line)
 		var fileInfo FileInfo = FileInfo{
