@@ -21,15 +21,14 @@
     <el-footer>
       <div style="margin-top: 20px">
         <el-row>
-          
+          <el-col :span="4"><el-button type="primary" @click="upload">上传</el-button></el-col>
           <el-col :span="4">
-           
-            <input type="file" id="myfile" @change.prevent.stop="upload">
-  </el-col>
-          <el-col :span="4"><el-button type="primary" @click="returnHome">下载</el-button></el-col>
-          <el-col :span="4"><el-button type="primary" @click="returnHome">复制</el-button></el-col>
-          <el-col :span="4"><el-button type="primary" @click="returnHome">粘贴</el-button></el-col>
-          <el-col :span="4"><el-button type="primary" @click="returnHome">移动</el-button></el-col>
+
+            <el-button type="primary" @click="download">下载</el-button>
+          </el-col>
+          <el-col :span="4"><el-button type="primary" @click="copy">复制</el-button></el-col>
+          <el-col :span="4"><el-button type="primary" @click="paste">粘贴</el-button></el-col>
+          <el-col :span="4"><el-button type="primary" @click="move">移动</el-button></el-col>
           <el-col :span="4">
             <el-button type="primary" @click="delPath">删除</el-button>
           </el-col>
@@ -41,7 +40,7 @@
 </template>
   
 <script>
-import { ElMessage, ElMessageBox} from "element-plus";
+import { ElMessage, ElMessageBox } from "element-plus";
 import { handleError } from "vue";
 import { ListPath, Excute } from "../../wailsjs/go/app/App.js";
 import useGlobalProperties from '../hooks/globalVar.js'
@@ -52,8 +51,8 @@ export default {
     return {
       currentDir: "",
       selectPath: "",
-      fileName: '',
-      toUploadFileList:[],  // UploadUserFile
+      toCopyFilePath: "", // 将要拷贝的文件或者目录
+      toMoveFilePath: "", // 将要拷贝的文件或者目录
       tableData: [
         {
           Permition: "",
@@ -127,8 +126,9 @@ export default {
         .then(() => {
           Excute("adb shell rm -rf " + this.selectPath).then((result) => {
             this.handleCommandResult(result)
-          },
             that.updatePath(this.currentDir)
+          }
+
 
 
           )
@@ -139,7 +139,7 @@ export default {
 
 
     },
-    
+
     handleCommandResult: function (execResult) {
       console.log("handleCommandResult返回值:", execResult)
       if (execResult.ExitCode == 0) {
@@ -149,32 +149,78 @@ export default {
       }
     },
 
-    handleChange(uploadFile, files){
-      console.log("执行了了handleChange，参数为",uploadFile,files,"此时toUploadFileList列表为：",this.toUploadFileList);
-      filepath 
+
+    upload() {
+      var that = this
+      ElMessageBox.prompt('请输入要上传的文件路径', '上传文件', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+      })
+        .then(({ value }) => {
+          Excute(`adb push ${value} ${that.currentDir}`).then((result) => {
+            that.handleCommandResult(result)
+            that.updatePath(that.currentDir)
+          })
+        })
+        .catch(() => {
+        })
     },
-    
-    upload(event) {
-      console.log("event",event)
-        let files = event.target.files[0];
-        console.log("files",files)
-        this.fileName = this.getObjectUrl(files);
-        console.log("this.fileName",this.fileName)
-        console.log(files.path)
+    download() {
+      var that = this
+      ElMessageBox.prompt('请输入要下载的文件目录路径， 留空则为当前路径', '下载文件', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+      })
+        .then(({ value }) => {
+          if (value == null) {
+            value = "."
+          }
+          Excute(`adb pull ${that.selectPath} ${value}`).then((result) => {
+            that.handleCommandResult(result)
+            that.updatePath(that.currentDir)
+          })
+        })
+        .catch(() => {
+        })
     },
-    getObjectUrl(file) {
-      let url = null;
-      if (window.createObjectURL != undefined) {
-        // basic
-        url = window.createObjectURL(file);
-      } else if (window.webkitURL != undefined) {
-        // webkit or chrome
-        url = window.webkitURL.createObjectURL(file);
-      } else if (window.URL != undefined) {
-        // mozilla(firefox)
-        url = window.URL.createObjectURL(file);
+
+    copy() {
+      this.toCopyFilePath = this.selectPath;
+      ElMessage({
+        message: '选择文件成功，请进入需要拷贝到的目录，然后点击拷贝',
+        type: 'success',
+      })
+    },
+    paste() {
+      var that = this
+      if (that.toCopyFilePath == "") {
+        ElMessage({
+          message: '请先选择需要拷贝的文件',
+          type: 'error',
+        })
+      } else {
+        Excute(`adb shell cp -r ${that.toCopyFilePath} ${that.currentDir}`).then((result) => {
+          that.handleCommandResult(result)
+          that.updatePath(that.currentDir)
+          that.toCopyFilePath = ""
+        })
       }
-      return url;
+    },
+    move() {
+      var that = this
+      if (that.toMoveFilePath == "") {
+        that.toMoveFilePath = that.selectPath;
+        ElMessage({
+          message: '选择文件成功，请进入需要移动到的目录，然后再点击移动',
+          type: 'success',
+        })
+      } else {
+        Excute(`adb shell mv ${that.toMoveFilePath} ${that.currentDir}`).then((result) => {
+          that.handleCommandResult(result)
+          that.updatePath(that.currentDir)
+          that.toMoveFilePath = ""
+        })
+      }
     }
   },
   beforeUnmount() {

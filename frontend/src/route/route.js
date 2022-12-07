@@ -4,6 +4,7 @@ import { createRouter, createWebHashHistory, createWebHistory } from "vue-router
 import index from "../components/index.vue";
 import helloworld from "../components/HelloWorld.vue";
 import filemanager from "../components/FileManager.vue";
+import adb from "../components/Adb.vue"
 // 2. 定义路由配置
 const routes = [
   {
@@ -26,7 +27,18 @@ const routes = [
   { 
     path: "/filemanager", 
     name: 'filemanager',
-    component: filemanager
+    component: filemanager,
+    meta: {
+      keepAlive: true   // 不需要缓存
+    }
+  },
+  { 
+    path: "/adb", 
+    name: 'adb',
+    component: adb,
+    meta: {
+      keepAlive: true   // 不需要缓存
+    }
   },
 ];
 

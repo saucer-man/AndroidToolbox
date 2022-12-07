@@ -7,7 +7,7 @@
         <el-menu-item index="/index">主页</el-menu-item>
         <el-menu-item index="/helloworld">软件管理</el-menu-item>
         <el-menu-item index="/filemanager">文件管理</el-menu-item>
-
+        <el-menu-item index="/adb">ADB终端</el-menu-item>
       </el-menu>
     </el-aside>
     <router-view v-slot="{ Component }">
