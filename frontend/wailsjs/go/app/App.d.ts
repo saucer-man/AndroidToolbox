@@ -6,6 +6,8 @@ export function Excute(arg1:string):Promise<app.ExcuteResult>;
 
 export function ExcuteSync(arg1:string):Promise<app.ExcuteResult>;
 
+export function GetCurrentActivity():Promise<app.Actitity>;
+
 export function GetDeviceList():Promise<Array<string>>;
 
 export function GetDeviceProp():Promise<app.DevicePropList>;

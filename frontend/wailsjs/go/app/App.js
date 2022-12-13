@@ -10,6 +10,10 @@ export function ExcuteSync(arg1) {
   return window['go']['app']['App']['ExcuteSync'](arg1);
 }
 
+export function GetCurrentActivity() {
+  return window['go']['app']['App']['GetCurrentActivity']();
+}
+
 export function GetDeviceList() {
   return window['go']['app']['App']['GetDeviceList']();
 }
