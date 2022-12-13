@@ -5,4 +5,6 @@ test/
 log/
 screenshot/
 dist
+.DS_Store
+__pychahe__
 

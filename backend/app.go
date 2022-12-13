@@ -9,7 +9,6 @@ import (
 	"os/exec"
 	"regexp"
 	"strings"
-	"syscall"
 
 	"github.com/elliotchance/orderedmap/v2"
 
@@ -162,7 +161,7 @@ func (a *App) ExcuteSync(command string) ExcuteResult {
 		return excuteResult
 	}
 	cmd := exec.Command(name, args...)
-	cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
+	PrepareBackgroundCommand(cmd)
 	cmd.Start()
 	return excuteResult
 }

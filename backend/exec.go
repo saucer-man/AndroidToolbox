@@ -26,7 +26,8 @@ func RunCommand(name string, args ...string) (stdout string, stderr string, exit
 	log.Info("run command:", name, args)
 	var outbuf, errbuf bytes.Buffer
 	cmd := exec.Command(name, args...)
-	cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
+	PrepareBackgroundCommand(cmd)
+
 	cmd.Stdout = &outbuf
 	cmd.Stderr = &errbuf
 
