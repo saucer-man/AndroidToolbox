@@ -242,37 +242,35 @@ func (a *App) ListPath(path string) ListFileRes {
 
 }
 
-type Actitity struct{
-	PackageName string
+type Actitity struct {
+	PackageName  string
 	ActivityName string
 }
+
 // 获取当前的activity
-func(a *App)GetCurrentActivity()Actitity{
-	
+func (a *App) GetCurrentActivity() Actitity {
+
 	excuteResult := Actitity{
 		PackageName:  "",
-		ActivityName:   "",
-
+		ActivityName: "",
 	}
 	stdOut, stdErr, exitCode := RunCommand("adb", "shell", "dumpsys window | grep mCurrentFocus")
 	if exitCode != 0 {
-		log.Errorf("执行命令 adb shell dumpsys window | grep mCurrentFocus 出错: %s",  stdErr)
+		log.Errorf("执行命令 adb shell dumpsys window | grep mCurrentFocus 出错: %s", stdErr)
 		return excuteResult
 	}
-	
+
 	r := regexp.MustCompile(`mCurrentFocus=Window{.*? .*? (.*?)(/.*?)?}`)
 
 	matchs := r.FindStringSubmatch(stdOut)
 
-	if len(matchs)==2{
+	if len(matchs) == 2 {
 		excuteResult.PackageName = matchs[1]
 	}
-	if len(matchs)==3{
+	if len(matchs) == 3 {
 		excuteResult.PackageName = matchs[1]
-		excuteResult.ActivityName = matchs[2]
+		excuteResult.ActivityName = strings.Replace(matchs[2], "/", "", 1)
 	}
-	log.Infof("获取当前包名的返回结果为:%+v",excuteResult)
+	log.Infof("获取当前包名的返回结果为:%+v", excuteResult)
 	return excuteResult
 }
-
-

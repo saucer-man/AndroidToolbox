@@ -2,7 +2,7 @@
 <template>
   <el-container>
 
-    <el-main>
+    <el-main >
       <div align="center">current dir: <el-input v-model="currentDir" class="w-50 m-2" size="small"
           placeholder="Please Input path" @keyup.enter.native="updatePath(currentDir)" /></div>
       <el-table ref="singleTableRef" :data="tableData" highlight-current-row style="width: 100%"
@@ -229,7 +229,7 @@ export default {
 };
 </script>
 
-<style type="text/css">
+<style type="text/css" scoped>
 .el-main {
   /* padding-top:0 !important; */
   padding: 0 !important;

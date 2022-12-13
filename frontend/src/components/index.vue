@@ -203,7 +203,7 @@ export default {
 };
 </script>
 
-<style type="text/css">
+<style type="text/css" scoped>
 .el-button {
   width: 60px;
   margin-bottom: 20px;

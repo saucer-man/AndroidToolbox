@@ -1,5 +1,5 @@
-//go:build app
-// +build !windows
+//go:build windows
+// +build windows
 
 package app
 

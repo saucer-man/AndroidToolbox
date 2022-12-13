@@ -23,9 +23,7 @@ const routes = [
     path: "/softmanager", 
     name: 'softmanager',
     component: softmanager,
-    meta: {
-      keepAlive: true   // 不需要缓存
-    }
+
   },
   { 
     path: "/filemanager", 
