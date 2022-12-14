@@ -46,7 +46,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
     if (!formEl) return
     formEl.validate((valid) => {
         if (valid) {
-            Excute(adbForm.command).then((result) => {
+            Excute(adbForm.command.split(" ")).then((result) => {
                 console.log("handleCommandResult返回值:", result)
                 if (result.ExitCode == 0) {
                     // ElMessage.success("命令执行成功")

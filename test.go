@@ -1,12 +1,14 @@
 package main
 
 import (
-	app "androidtoolbox/backend"
 	"fmt"
+	"os/exec"
 )
 
 func main1() {
-	app := app.NewApp()
-	a := app.GetCurrentActivity()
-	fmt.Printf("%+v\n", a)
+	f, err := exec.LookPath("adb")
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println(f) //  /bin/ls
 }

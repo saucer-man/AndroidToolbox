@@ -19,4 +19,13 @@ wails doctor
 wails build -upx
 ```
 
+## debug
+
 and you can use `wails dev` to debug
+前端热调试方法：
+```
+wails serve
+// 再开另一终端
+cd frontend
+npm run serve
+```

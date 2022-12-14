@@ -111,7 +111,9 @@ export default {
   },
   methods: {
     return1: function () {
-      Excute("adb shell input keyevent BACK").then((result) => (
+      // 
+
+    Excute(["adb","shell", "input","keyevent","BACK"]).then((result) => (
         this.handleCommandResult(result)
       )
       )
@@ -119,31 +121,31 @@ export default {
 
     },
     returnHome: function () {
-      Excute("adb shell input keyevent HOME").then((result) => (
+      Excute(["adb","shell", "input","keyevent","HOME"]).then((result) => (
         this.handleCommandResult(result)
       )
       )
     },
     soundAdd: function () {
-      Excute("adb shell input keyevent 24").then((result) => (
+      Excute(["adb","shell", "input","keyevent","24"]).then((result) => (
         this.handleCommandResult(result)
       )
       )
     },
     soundDel: function () {
-      Excute("adb shell input keyevent 25").then((result) => (
+      Excute(["adb","shell", "input","keyevent","25"]).then((result) => (
         this.handleCommandResult(result)
       )
       )
     },
     lock: function () {
-      Excute("adb shell input keyevent 26").then((result) => (
+      Excute(["adb","shell", "input","keyevent","26"]).then((result) => (
         this.handleCommandResult(result)
       )
       )
     },
     unlock: function () {
-      Excute("adb shell input swipe 200 500 200 0").then((result) => {
+      Excute(["adb","shell", "input","swipe","200","500","200","0"]).then((result) => {
         this.handleCommandResult(result)
       }
       )
@@ -159,31 +161,31 @@ export default {
       )
     },
     scrcpy: function () {
-      ExcuteSync("scrcpy").then((result) => (
+      ExcuteSync(["scrcpy"]).then((result) => (
         this.handleCommandResult(result)
       )
       )
     },
     reboot: function () {
-      Excute("adb reboot").then((result) => {
+      Excute(["adb","reboot"]).then((result) => {
         this.handleCommandResult(result)
       }
       )
     },
     shutdown: function () {
-      Excute("adb shutdown").then((result) => {
+      Excute(["adb","shutdown"]).then((result) => {
         this.handleCommandResult(result)
       }
       )
     },
     bootloader: function () {
-      Excute("adb reboot bootloader").then((result) => {
+      Excute(["adb", "reboot", "bootloader"]).then((result) => {
         this.handleCommandResult(result)
       }
       )
     },
     fastboot: function () {
-      Excute("adb reboot fastboot").then((result) => {
+      Excute(["adb", "reboot", "fastboot"]).then((result) => {
         this.handleCommandResult(result)
       }
       )
@@ -212,5 +214,7 @@ export default {
 .el-main {
   /* padding-top:0 !important; */
   padding: 0 !important;
+  margin-left: 10px;
+  width:200px
 }
 </style>

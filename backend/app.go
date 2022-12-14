@@ -118,23 +118,29 @@ func (a *App) GetDeviceProp() DevicePropList {
 }
 
 // 同步执行命令
-func (a *App) Excute(command string) ExcuteResult {
+func (a *App) Excute(commands []string) ExcuteResult {
 	excuteResult := ExcuteResult{
 		Stdout:   "",
 		Stderr:   "",
 		ExitCode: 0,
 	}
-	args := strings.Split(command, " ")
-	name := args[0]
-	args = args[1:]
+
+	command := commands[0]
+	args := []string{}
+	if len(command)>1{
+		args = commands[1:]
+	}
+	// args := strings.Split(command, " ")
+	// name := args[0]
+	// args = args[1:]
 	// 先检查命令是否存在
-	if !CheckExists(name) {
-		log.Errorf("didn't find '%s' executable\n", name)
-		excuteResult.Stderr = fmt.Sprintf("%s 未安装", name)
+	if !CheckExists(command) {
+		log.Errorf("didn't find '%s' executable\n", command)
+		excuteResult.Stderr = fmt.Sprintf("%s 未安装", command)
 		excuteResult.ExitCode = 1
 		return excuteResult
 	}
-	stdout, stderr, exitCode := RunCommand(name, args...)
+	stdout, stderr, exitCode := RunCommand(command, args...)
 
 	excuteResult.Stdout = stdout
 	excuteResult.Stderr = stderr
@@ -143,24 +149,26 @@ func (a *App) Excute(command string) ExcuteResult {
 }
 
 // 异步执行命令
-func (a *App) ExcuteSync(command string) ExcuteResult {
+func (a *App) ExcuteSync(commands []string) ExcuteResult {
 	excuteResult := ExcuteResult{
 		Stdout:   "",
 		Stderr:   "",
 		ExitCode: 0,
 	}
-	args := strings.Split(command, " ")
-	name := args[0]
-	args = args[1:]
-	log.Info("run command:", name, args)
+	command := commands[0]
+	args := []string{}
+	if len(command)>1{
+		args = commands[1:]
+	}
+
 	// 先检查命令是否存在
-	if !CheckExists(name) {
-		log.Errorf("didn't find '%s' executable\n", name)
-		excuteResult.Stderr = fmt.Sprintf("%s 未安装", name)
+	if !CheckExists(command) {
+		log.Errorf("didn't find '%s' executable\n", command)
+		excuteResult.Stderr = fmt.Sprintf("%s 未安装", command)
 		excuteResult.ExitCode = 1
 		return excuteResult
 	}
-	cmd := exec.Command(name, args...)
+	cmd := exec.Command(command, args...)
 	PrepareBackgroundCommand(cmd)
 	cmd.Start()
 	return excuteResult

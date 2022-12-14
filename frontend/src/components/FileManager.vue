@@ -124,7 +124,7 @@ export default {
         }
       )
         .then(() => {
-          Excute("adb shell rm -rf " + this.selectPath).then((result) => {
+          Excute(["adb","shell","rm","-rf",this.selectPath]).then((result) => {
             this.handleCommandResult(result)
             that.updatePath(this.currentDir)
           }
@@ -157,7 +157,7 @@ export default {
         cancelButtonText: '取消',
       })
         .then(({ value }) => {
-          Excute(`adb push ${value} ${that.currentDir}`).then((result) => {
+          Excute(["adb","push",value,that.currentDir]).then((result) => {
             that.handleCommandResult(result)
             that.updatePath(that.currentDir)
           })
@@ -175,7 +175,7 @@ export default {
           if (value == null) {
             value = "."
           }
-          Excute(`adb pull ${that.selectPath} ${value}`).then((result) => {
+          Excute(["adb", "pull",that.selectPath, value]).then((result) => {
             that.handleCommandResult(result)
             that.updatePath(that.currentDir)
           })
@@ -199,7 +199,7 @@ export default {
           type: 'error',
         })
       } else {
-        Excute(`adb shell cp -r ${that.toCopyFilePath} ${that.currentDir}`).then((result) => {
+        Excute(["adb", "shell", "cp", "-r", that.toCopyFilePath, that.currentDir]).then((result) => {
           that.handleCommandResult(result)
           that.updatePath(that.currentDir)
           that.toCopyFilePath = ""
@@ -215,7 +215,7 @@ export default {
           type: 'success',
         })
       } else {
-        Excute(`adb shell mv ${that.toMoveFilePath} ${that.currentDir}`).then((result) => {
+        Excute(["adb" ,"shell", "mv" ,that.toMoveFilePath,that.currentDir]).then((result) => {
           that.handleCommandResult(result)
           that.updatePath(that.currentDir)
           that.toMoveFilePath = ""

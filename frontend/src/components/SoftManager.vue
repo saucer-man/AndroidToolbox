@@ -79,15 +79,15 @@ export default {
     // 更新所有的包
     updatePackages: function () {
       const that = this
-      Excute("adb shell pm list packages").then((result) => {
+      Excute(["adb","shell","pm","list","packages"]).then((result) => {
         console.log("adb shell pm list packages 返回值:", result)
         if (result.ExitCode == 0) {
-          var packages = result.Stdout.split('\r\n');
+          var packages = result.Stdout.split('\n');
           for (var i = 0; i < packages.length; i++) {
             if (packages[i] != null && packages[i].length > 0)	//去掉空的
             {
               // console.log(packages[i].replace("package:",""));
-              that.packages.push({ "value": packages[i].replace("package:", "") })
+              that.packages.push({ "value": packages[i].replace("package:", "").replace("\r", "") })
             }
           }
         } else {
@@ -99,11 +99,11 @@ export default {
     // 提取安装包apk
     downloadPackaged: function () {
       const that = this
-      Excute(`adb shell pm path ${that.selectPackage}`).then((result) => {
+      Excute(["adb","shell","pm","path",that.selectPackage]).then((result) => {
         console.log("adb shell pm path package 返回值:", result)
         if (result.ExitCode == 0) {
           var packagePath = result.Stdout.replace("package:", "").replace("\r\n", "");
-          Excute(`adb pull ${packagePath} ${that.selectPackage}.apk`).then((result1) => {
+          Excute(["adb","pull", packagePath,`${that.selectPackage}.apk`]).then((result1) => {
             if (result1.ExitCode == 0) {
               ElMessage.success(`成功将${that.selectPackage}下载到当前目录`)
             } else {
@@ -119,7 +119,7 @@ export default {
     },
     clearPackage: function () {
       const that = this
-      Excute(`adb shell pm clear ${that.selectPackage}`).then((result) => {
+      Excute(["adb","shell", "pm", "clear" ,that.selectPackage]).then((result) => {
         console.log("adb shell pm clear 返回值:", result)
         if (result.ExitCode == 0) {
           ElMessage.success(`成功清除`)
@@ -131,7 +131,7 @@ export default {
     },
     removePackage: function () {
       const that = this
-      Excute(`adb uninstall ${that.selectPackage}`).then((result) => {
+      Excute(["adb" ,"uninstall" ,that.selectPackage]).then((result) => {
         console.log("adb uninstall 返回值:", result)
         if (result.ExitCode == 0) {
           ElMessage.success(`成功卸载`)
@@ -143,7 +143,7 @@ export default {
     },
     removePackageWithData: function () {
       const that = this
-      Excute(`adb uninstall -k ${that.selectPackage}`).then((result) => {
+      Excute(["adb" ,"uninstall" ,"-k", that.selectPackage]).then((result) => {
         console.log("adb uninstall 返回值:", result)
         if (result.ExitCode == 0) {
           ElMessage.success(`成功卸载`)
@@ -155,7 +155,7 @@ export default {
     },
     startPackage: function () {
       const that = this
-      Excute(`adb shell monkey -p ${that.selectPackage} -c android.intent.category.LAUNCHER 1`).then((result) => {
+      Excute(["adb" ,"shell" ,"monkey", "-p", that.selectPackage,"-c", "android.intent.category.LAUNCHER", "1"]).then((result) => {
         console.log("adb 启动app 返回值:", result)
         if (result.ExitCode == 0) {
           ElMessage.success(`成功启动`)
@@ -167,7 +167,7 @@ export default {
     },
     stopPackage: function () {
       const that = this
-      Excute(`adb shell am force-stop ${that.selectPackage}`).then((result) => {
+      Excute(["adb", "shell", "am" ,"force-stop", that.selectPackage]).then((result) => {
         console.log("adb 启动app 返回值:", result)
         if (result.ExitCode == 0) {
           ElMessage.success(`成功启动`)
@@ -192,7 +192,7 @@ export default {
         cancelButtonText: '取消',
       })
         .then(({ value }) => {
-          Excute(`adb install ${value}`).then((result) => {
+          Excute(["adb","install",value]).then((result) => {
             that.handleCommandResult(result)
 
           })
@@ -202,7 +202,7 @@ export default {
     },
     getPackageInfo: function () {
       const that = this
-      Excute(`adb shell dumpsys package ${that.selectPackage}`).then((result) => {
+      Excute(["adb", "shell", "dumpsys", "package" ,that.selectPackage]).then((result) => {
         console.log("adb 启动app 返回值:", result)
         if (result.ExitCode == 0) {
           that.selectPackageInfo = result.Stdout
@@ -223,7 +223,7 @@ export default {
 <style type="text/css" scoped>
 .el-main {
   margin-left: 10px;
-  width: 750px;
+  width: 790px;
 
 }
 
