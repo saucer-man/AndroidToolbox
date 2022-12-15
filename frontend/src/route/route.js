@@ -30,7 +30,7 @@ const routes = [
     name: 'filemanager',
     component: filemanager,
     meta: {
-      keepAlive: true   // 不需要缓存
+      keepAlive: false   // 不需要缓存
     }
   },
   { 
@@ -38,7 +38,7 @@ const routes = [
     name: 'adb',
     component: adb,
     meta: {
-      keepAlive: true   // 不需要缓存
+      keepAlive: false   // 不需要缓存
     }
   },
 ];

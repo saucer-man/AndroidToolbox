@@ -10,22 +10,22 @@ export function ExcuteSync(arg1) {
   return window['go']['app']['App']['ExcuteSync'](arg1);
 }
 
-export function GetCurrentActivity() {
-  return window['go']['app']['App']['GetCurrentActivity']();
+export function GetCurrentActivity(arg1) {
+  return window['go']['app']['App']['GetCurrentActivity'](arg1);
 }
 
 export function GetDeviceList() {
   return window['go']['app']['App']['GetDeviceList']();
 }
 
-export function GetDeviceProp() {
-  return window['go']['app']['App']['GetDeviceProp']();
+export function GetDeviceProp(arg1) {
+  return window['go']['app']['App']['GetDeviceProp'](arg1);
 }
 
 export function GetImage() {
   return window['go']['app']['App']['GetImage']();
 }
 
-export function ListPath(arg1) {
-  return window['go']['app']['App']['ListPath'](arg1);
+export function ListPath(arg1, arg2) {
+  return window['go']['app']['App']['ListPath'](arg1, arg2);
 }

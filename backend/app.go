@@ -63,7 +63,7 @@ type ExcuteResult struct {
 	ExitCode int
 }
 
-func (a *App) GetDeviceProp() DevicePropList {
+func (a *App) GetDeviceProp(deviceid string) DevicePropList {
 	var res DevicePropList /*创建集合 */
 	propAttitudeOrderedMap := orderedmap.NewOrderedMap[string, string]()
 
@@ -93,7 +93,7 @@ func (a *App) GetDeviceProp() DevicePropList {
 	// 	"fingerprint": "ro.build.fingerprint",
 	// }
 
-	out, err, _ := RunCommand("adb", "shell", "getprop")
+	out, err, _ := RunCommand("adb", "-s", deviceid, "shell", "getprop")
 	log.Info("adb getprop命令返回错误结果: %s", err)
 	for _, propName := range propAttitudeOrderedMap.Keys() {
 		propMean, _ := propAttitudeOrderedMap.Get(propName)
@@ -127,7 +127,7 @@ func (a *App) Excute(commands []string) ExcuteResult {
 
 	command := commands[0]
 	args := []string{}
-	if len(command)>1{
+	if len(command) > 1 {
 		args = commands[1:]
 	}
 	// args := strings.Split(command, " ")
@@ -157,7 +157,7 @@ func (a *App) ExcuteSync(commands []string) ExcuteResult {
 	}
 	command := commands[0]
 	args := []string{}
-	if len(command)>1{
+	if len(command) > 1 {
 		args = commands[1:]
 	}
 
@@ -168,6 +168,7 @@ func (a *App) ExcuteSync(commands []string) ExcuteResult {
 		excuteResult.ExitCode = 1
 		return excuteResult
 	}
+	log.Info("run command:", command, args)
 	cmd := exec.Command(command, args...)
 	PrepareBackgroundCommand(cmd)
 	cmd.Start()
@@ -208,7 +209,7 @@ type FileInfo struct {
 }
 
 // 获取某个路径的文件信息
-func (a *App) ListPath(path string) ListFileRes {
+func (a *App) ListPath(deviceid, path string) ListFileRes {
 	listFileRes := ListFileRes{
 		FilesList: FilesList{
 			FilesList: []FileInfo{},
@@ -217,7 +218,7 @@ func (a *App) ListPath(path string) ListFileRes {
 		StdErr: "",
 	}
 
-	stdOut, stdErr, exitCode := RunCommand("adb", "shell", "ls", "-la", path)
+	stdOut, stdErr, exitCode := RunCommand("adb", "-s", deviceid, "shell", "ls", "-la", path)
 	if exitCode != 0 {
 		log.Errorf("执行命令 adb shell ls -la %s 出错%s", path, stdErr)
 		listFileRes.StdErr = stdErr
@@ -256,13 +257,13 @@ type Actitity struct {
 }
 
 // 获取当前的activity
-func (a *App) GetCurrentActivity() Actitity {
+func (a *App) GetCurrentActivity(deviceid string) Actitity {
 
 	excuteResult := Actitity{
 		PackageName:  "",
 		ActivityName: "",
 	}
-	stdOut, stdErr, exitCode := RunCommand("adb", "shell", "dumpsys window | grep mCurrentFocus")
+	stdOut, stdErr, exitCode := RunCommand("adb", "-s", deviceid, "shell", "dumpsys window | grep mCurrentFocus")
 	if exitCode != 0 {
 		log.Errorf("执行命令 adb shell dumpsys window | grep mCurrentFocus 出错: %s", stdErr)
 		return excuteResult

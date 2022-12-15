@@ -6,12 +6,12 @@ export function Excute(arg1:Array<string>):Promise<app.ExcuteResult>;
 
 export function ExcuteSync(arg1:Array<string>):Promise<app.ExcuteResult>;
 
-export function GetCurrentActivity():Promise<app.Actitity>;
+export function GetCurrentActivity(arg1:string):Promise<app.Actitity>;
 
 export function GetDeviceList():Promise<Array<string>>;
 
-export function GetDeviceProp():Promise<app.DevicePropList>;
+export function GetDeviceProp(arg1:string):Promise<app.DevicePropList>;
 
 export function GetImage():Promise<number>;
 
-export function ListPath(arg1:string):Promise<app.ListFileRes>;
+export function ListPath(arg1:string,arg2:string):Promise<app.ListFileRes>;
