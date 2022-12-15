@@ -76,8 +76,8 @@ export default {
 
 <style scoped>
 /* .el-menu-item {
-  background-color: rgba(255, 0, 0, );
-}*/
+      background-color: rgba(255, 0, 0, );
+    }*/
 
 .el-menu-item.is-active {
   background-color: rgba(64, 158, 255, 0.1);
@@ -89,13 +89,16 @@ export default {
   display: flex;
   align-items: center;
 }
+
 .el-dropdown {
   margin-top: 270px;
   width: 100%;
 }
-.el-button-group{
+
+.el-button-group {
   width: 100%;
 }
+
 .el-container {
   /*设置内部填充为0，几个布局元素之间没有间距*/
   padding: 0px;
