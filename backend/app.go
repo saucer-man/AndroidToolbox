@@ -36,7 +36,7 @@ func (a *App) GetDeviceList() []string {
 	out, _, _ := RunCommand("adb", "devices", "-l")
 
 	var devices []string
-	log.Info("adb devices命令返回结果: %s", out)
+	log.Debug("adb devices命令返回结果: %s", out)
 	sc := bufio.NewScanner(strings.NewReader(out))
 	for sc.Scan() {
 		line := sc.Text()
@@ -45,7 +45,7 @@ func (a *App) GetDeviceList() []string {
 			devices = append(devices, id[0])
 		}
 	}
-	log.Info("adb devices命令返回结果: %s", devices)
+	log.Debug("adb devices命令返回结果: %s", devices)
 	return devices
 }
 
@@ -94,10 +94,16 @@ func (a *App) GetDeviceProp(deviceid string) DevicePropList {
 	// }
 
 	out, err, _ := RunCommand("adb", "-s", deviceid, "shell", "getprop")
-	log.Info("adb getprop命令返回错误结果: %s", err)
+	log.Debug("adb getprop命令返回错误结果: %s", err)
+
 	for _, propName := range propAttitudeOrderedMap.Keys() {
+
 		propMean, _ := propAttitudeOrderedMap.Get(propName)
-		log.Info("propName: %s", propName)
+		log.Debug("propName: %s", propName)
+		if err != "" {
+			res.DevicePropList = append(res.DevicePropList, DeviceProp{propName, "", propMean})
+			continue
+		}
 		sc := bufio.NewScanner(strings.NewReader(out))
 		for sc.Scan() {
 			line := sc.Text()
@@ -110,6 +116,7 @@ func (a *App) GetDeviceProp(deviceid string) DevicePropList {
 				res.DevicePropList = append(res.DevicePropList, DeviceProp{propName, value, propMean})
 				break
 			}
+
 		}
 	}
 	log.Info("adb getprop命令返回结果: %s", res)

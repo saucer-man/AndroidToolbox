@@ -23,7 +23,7 @@ func CheckExists(binName string) bool {
 
 // 带有outStr和errStr和exitCode的命令执行
 func RunCommand(name string, args ...string) (stdout string, stderr string, exitCode int) {
-	log.Info("run command:", name, args)
+	log.Debug("run command:", name, args)
 	var outbuf, errbuf bytes.Buffer
 	cmd := exec.Command(name, args...)
 	PrepareBackgroundCommand(cmd)

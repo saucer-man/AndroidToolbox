@@ -24,7 +24,7 @@
       >
         <el-table-column type="index" width="50" />
         <el-table-column property="Permition" label="权限" width="100" />
-        <el-table-column property="Uid" label="Uid" width="50" />
+        <el-table-column property="Uid" label="Uid" width="100" />
         <el-table-column property="Gid" label="Gid" width="100" />
         <el-table-column property="Size" label="Size" width="100" />
         <el-table-column property="ModifyDate" label="ModifyDate" width="150" />

@@ -1,19 +1,17 @@
 <template>
   <el-container>
     <el-aside width="130px">
-      <el-menu
-        default-active="/index"
-        class="el-menu-vertical-demo"
-        router="true"
-        active-text-color="#409eff"
-      >
+      <el-menu default-active="/index" class="el-menu-vertical-demo" router="true" active-text-color="#409eff">
         <el-menu-item index="/index">主页</el-menu-item>
         <el-menu-item index="/softmanager">软件管理</el-menu-item>
         <el-menu-item index="/filemanager">文件管理</el-menu-item>
         <el-menu-item index="/adb">ADB终端</el-menu-item>
 
-        <el-dropdown size="small" split-button type="primary" @command="handleCommand">
-          选择设备<br />{{ selectdevice }}
+        <el-dropdown @command="handleSelectdevice">
+
+          <el-button type="primary">
+            选择设备<br />{{ selectdevice.substring(0,9) }}
+          </el-button>
           <template #dropdown>
             <el-dropdown-menu>
               <el-dropdown-item v-for="item in devices" :command="item">
@@ -48,6 +46,7 @@ import {
 } from '../wailsjs/go/app/App.js';
 import useGetGlobalProperties from './hooks/global';
 import { reactive, ref, getCurrentInstance } from 'vue';
+import { resolveUnref } from '@vueuse/shared';
 
 export default {
   data() {
@@ -58,19 +57,30 @@ export default {
   },
 
   created() {
-    //  this.proxy  = getCurrentInstance()
-    GetDeviceList().then((result) => {
-      this.devices = result;
-      (this.selectdevice = result[0]), console.log('获取到的proxy:', this.devices);
-    });
+
+    setInterval(() => {
+      console.log("开始---");
+      GetDeviceList().then((result) => {
+        this.devices = result;
+        console.log('获取到的devices:', this.devices);
+        if (result != null && result.length > 0 && this.selectdevice == "") {
+          this.selectdevice = result[0];
+        } else if (result == null) {
+          this.devices = []
+          this.selectdevice = ""
+        }
+
+      });
+    }, 5000);
+
   },
 
   methods: {
-    handleCommand: function (command) {
-      this.selectdevice = command;
+    handleSelectdevice: function (device) {
+      this.selectdevice = device;
     },
   },
-  beforeUnmount() {},
+  beforeUnmount() { },
 };
 </script>
 

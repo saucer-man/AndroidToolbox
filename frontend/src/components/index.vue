@@ -6,7 +6,7 @@
         <el-aside width="80%">
           <h3 align="center">设备信息</h3>
           <div id="wrap">
-            <el-table :data="tableData" max-height="430">
+            <el-table :data="tableData" max-height="430" width="600" empty-text="没有信息">
               <el-table-column prop="Name" label="属性" width="200" />
               <el-table-column prop="Value" label="值" width="200" />
               <el-table-column prop="Mean" label="获取方式" width="200" />
@@ -200,4 +200,5 @@ const handleCommandResult = async (execResult) => {
   margin-left: 10px;
   width: 180px;
 }
+
 </style>
