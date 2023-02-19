@@ -11,6 +11,7 @@ import (
 	"strings"
 
 	"github.com/elliotchance/orderedmap/v2"
+	"github.com/wailsapp/wails/v2/pkg/runtime"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -289,4 +290,54 @@ func (a *App) GetCurrentActivity(deviceid string) Actitity {
 	}
 	log.Infof("获取当前包名的返回结果为:%+v", excuteResult)
 	return excuteResult
+}
+
+func (a *App) UploadFile(deviceid string, dir string) ExcuteResult {
+	excuteResult := ExcuteResult{
+		Stdout:   "",
+		Stderr:   "",
+		ExitCode: 0,
+	}
+	toUploadFilePath, err := runtime.OpenFileDialog(a.ctx, runtime.OpenDialogOptions{
+		DefaultDirectory: "C://",
+		Title:            "选择将要上传的文件",
+	})
+	log.Infof("选择了一个文件:%+v", toUploadFilePath)
+	if err != nil {
+		excuteResult.ExitCode = -1
+		excuteResult.Stderr = fmt.Sprintf("failed opening dialog - %s", err.Error())
+		return excuteResult
+	}
+	if toUploadFilePath == "" {
+		excuteResult.Stderr = "您取消了该操作"
+		excuteResult.ExitCode = -1
+		return excuteResult
+	}
+
+	return a.Excute([]string{"adb", "-s", deviceid, "push", toUploadFilePath, dir})
+}
+
+func (a *App) DownloadFile(deviceid string, filePath string) ExcuteResult {
+	excuteResult := ExcuteResult{
+		Stdout:   "",
+		Stderr:   "",
+		ExitCode: 0,
+	}
+	toSaveDir, err := runtime.OpenDirectoryDialog(a.ctx, runtime.OpenDialogOptions{
+		DefaultDirectory: "C://",
+		Title:            "选择将要保存的文件位置",
+	})
+	log.Infof("选择了一个目录:%+v", toSaveDir)
+	if err != nil {
+		excuteResult.Stderr = fmt.Sprintf("failed opening dialog - %s", err.Error())
+		excuteResult.ExitCode = -1
+		return excuteResult
+	}
+	if toSaveDir == "" {
+		excuteResult.Stderr = "您取消了该操作"
+		excuteResult.ExitCode = -1
+		return excuteResult
+	}
+
+	return a.Excute([]string{"adb", "-s", deviceid, "pull", filePath, toSaveDir})
 }

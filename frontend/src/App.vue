@@ -59,10 +59,10 @@ export default {
   created() {
 
     setInterval(() => {
-      console.log("开始---");
+      // console.log("开始---");
       GetDeviceList().then((result) => {
         this.devices = result;
-        console.log('获取到的devices:', this.devices);
+        // console.log('获取到的devices:', this.devices);
         if (result != null && result.length > 0 && this.selectdevice == "") {
           this.selectdevice = result[0];
         } else if (result == null) {

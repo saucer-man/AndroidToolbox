@@ -8,8 +8,7 @@
           class="w-50 m-2"
           size="small"
           placeholder="Please Input path"
-          @keyup.enter.native="updatePath(currentDir)"
-        />
+          @keyup.enter.native="updatePath(currentDir)" />
       </div>
       <el-table
         ref="singleTableRef"
@@ -20,8 +19,7 @@
         height="450"
         :row-style="{ height: '10px' }"
         :cell-style="{ padding: '0px' }"
-        @cell-dblclick="bccelldblclick"
-      >
+        @cell-dblclick="bccelldblclick">
         <el-table-column type="index" width="50" />
         <el-table-column property="Permition" label="权限" width="100" />
         <el-table-column property="Uid" label="Uid" width="100" />
@@ -61,7 +59,13 @@
 <script setup>
 import { ElMessage, ElMessageBox } from "element-plus";
 import { handleError } from "vue";
-import { ListPath, Excute } from "../../wailsjs/go/app/App.js";
+import {
+  ListPath,
+  Excute,
+  UploadFile,
+  DownloadFile,
+} from "../../wailsjs/go/app/App.js";
+
 import useGetGlobalProperties from "../hooks/global";
 import buildPath from "../hooks/path.js";
 import { onActivated, ref, watch } from "vue";
@@ -162,51 +166,16 @@ const handleCommandResult = async (execResult) => {
   }
 };
 const upload = async () => {
-  ElMessageBox.prompt("请输入要上传的文件路径", "上传文件", {
-    confirmButtonText: "确定",
-    cancelButtonText: "取消",
-  })
-    .then(({ value }) => {
-      Excute([
-        "adb",
-        "-s",
-        props.selectdevice,
-        "push",
-        value,
-        currentDir.value,
-      ]).then((result) => {
-        handleCommandResult(result);
-        updatePath(currentDir.value);
-      });
-    })
-    .catch(() => {});
+  UploadFile(props.selectdevice, currentDir.value).then((result) => {
+    handleCommandResult(result);
+    updatePath(currentDir.value);
+  });
 };
 const download = async () => {
-  ElMessageBox.prompt(
-    "请输入要下载的文件目录路径， 留空则为当前路径",
-    "下载文件",
-    {
-      confirmButtonText: "确定",
-      cancelButtonText: "取消",
-    }
-  )
-    .then(({ value }) => {
-      if (value == null) {
-        value = ".";
-      }
-      Excute([
-        "adb",
-        "-s",
-        props.selectdevice,
-        "pull",
-        selectPath.value,
-        value,
-      ]).then((result) => {
-        handleCommandResult(result);
-        updatePath(currentDir.value);
-      });
-    })
-    .catch(() => {});
+  DownloadFile(props.selectdevice, selectPath.value).then((result) => {
+    handleCommandResult(result);
+    updatePath(currentDir.value);
+  });
 };
 const copy = async () => {
   toCopyFilePath.value = selectPath;

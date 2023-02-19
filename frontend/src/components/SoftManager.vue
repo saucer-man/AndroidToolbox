@@ -99,7 +99,7 @@ const updatePackages = async () => {
   });
 };
 // 提取安装包apk
-const downloadPackaged = async () => {
+const downloadPackage = async () => {
   Excute(['adb', '-s', props.selectdevice, 'shell', 'pm', 'path', selectPackage.value]).then(
     (result) => {
       console.log('adb shell pm path package 返回值:', result);
