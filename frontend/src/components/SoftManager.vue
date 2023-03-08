@@ -83,16 +83,16 @@ const updatePackages = async () => {
   Excute(['adb', '-s', props.selectdevice, 'shell', 'pm', 'list', 'packages']).then((result) => {
     console.log('adb shell pm list packages 返回值:', result);
     if (result.ExitCode == 0) {
-      var packages = result.Stdout.split('\n');
-      for (var i = 0; i < packages.length; i++) {
-        if (packages[i] != null && packages[i].length > 0) {
-          //去掉空的
-          // console.log(packages[i].replace("package:",""));
-          packages.push({
-            value: packages[i].replace('package:', '').replace('\r', ''),
+      var packages_raw = result.Stdout.split('\n');
+      for (var i = 0; i < packages_raw.length; i++) {
+        if (packages_raw[i] != null && packages_raw[i].length > 0) {
+          
+          packages.value.push({
+            value: packages_raw[i].replace('package:', '').replace('\r', ''),
           });
         }
       }
+      
     } else {
       ElMessage.success('命令执行出错: ' + execResult.Stderr);
     }
