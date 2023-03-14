@@ -57,7 +57,7 @@
             </el-row>
             <el-row>
               <el-col :span="10"
-                ><el-button type="primary" @click="bootloader">bootloader</el-button></el-col
+                ><el-button type="primary" @click="recovery">recovery</el-button></el-col
               >
               <el-col :span="4"></el-col>
               <el-col :span="10"
@@ -168,8 +168,8 @@ const shutdown = async () => {
     handleCommandResult(result);
   });
 };
-const bootloader = async () => {
-  Excute(['adb', '-s', props.selectdevice, 'reboot', 'bootloader']).then((result) => {
+const recovery = async () => {
+  Excute(['adb', '-s', props.selectdevice, 'reboot', 'recovery']).then((result) => {
     handleCommandResult(result);
   });
 };
