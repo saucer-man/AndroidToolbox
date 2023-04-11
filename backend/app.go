@@ -341,3 +341,28 @@ func (a *App) DownloadFile(deviceid string, filePath string) ExcuteResult {
 
 	return a.Excute([]string{"adb", "-s", deviceid, "pull", filePath, toSaveDir})
 }
+
+func (a *App) InstallPackage(deviceid string) ExcuteResult {
+	excuteResult := ExcuteResult{
+		Stdout:   "",
+		Stderr:   "",
+		ExitCode: 0,
+	}
+	toInstallFilePath, err := runtime.OpenFileDialog(a.ctx, runtime.OpenDialogOptions{
+		DefaultDirectory: "C://",
+		Title:            "选择将要安装的apk",
+	})
+	log.Infof("选择了一个apk:%+v", toInstallFilePath)
+	if err != nil {
+		excuteResult.ExitCode = -1
+		excuteResult.Stderr = fmt.Sprintf("failed opening dialog - %s", err.Error())
+		return excuteResult
+	}
+	if toInstallFilePath == "" {
+		excuteResult.Stderr = "您取消了该操作"
+		excuteResult.ExitCode = -1
+		return excuteResult
+	}
+
+	return a.Excute([]string{"adb", "-s", deviceid, "install", toInstallFilePath})
+}

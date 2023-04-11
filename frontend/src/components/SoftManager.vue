@@ -45,7 +45,7 @@ import { ElMessage, ElMessageBox } from 'element-plus';
 
 import { watch, ref, onActivated } from 'vue';
 
-import { GetCurrentActivity,Excute } from '../../wailsjs/go/app/App.js';
+import { GetCurrentActivity,Excute,InstallPackage } from '../../wailsjs/go/app/App.js';
 
 const props = defineProps({
   selectdevice: {
@@ -199,17 +199,9 @@ const handleCommandResult = async (execResult) => {
   }
 };
 const installPackage = async () => {
-  var that = this;
-  ElMessageBox.prompt('请输入要安装的apk路径', '上传文件', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-  })
-    .then(({ value }) => {
-      Excute(['adb', '-s', props.selectdevice, 'install', value]).then((result) => {
-        handleCommandResult(result);
-      });
-    })
-    .catch(() => {});
+    InstallPackage(props.selectdevice).then((result) => {
+    handleCommandResult(result);
+  });
 };
 const getPackageInfo = async () => {
   Excute([

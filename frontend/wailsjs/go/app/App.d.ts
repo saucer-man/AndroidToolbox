@@ -16,6 +16,8 @@ export function GetDeviceProp(arg1:string):Promise<app.DevicePropList>;
 
 export function GetImage():Promise<number>;
 
+export function InstallPackage(arg1:string):Promise<app.ExcuteResult>;
+
 export function ListPath(arg1:string,arg2:string):Promise<app.ListFileRes>;
 
 export function UploadFile(arg1:string,arg2:string):Promise<app.ExcuteResult>;

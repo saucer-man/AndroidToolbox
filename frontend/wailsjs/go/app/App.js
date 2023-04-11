@@ -30,6 +30,10 @@ export function GetImage() {
   return window['go']['app']['App']['GetImage']();
 }
 
+export function InstallPackage(arg1) {
+  return window['go']['app']['App']['InstallPackage'](arg1);
+}
+
 export function ListPath(arg1, arg2) {
   return window['go']['app']['App']['ListPath'](arg1, arg2);
 }
