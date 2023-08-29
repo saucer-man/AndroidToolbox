@@ -32,7 +32,6 @@ check env, if all conditions are met, just build
 wails doctor
 wails build -upx
 
-wails build -platform darwin
 ```
 
 ## debug

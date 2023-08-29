@@ -4,8 +4,12 @@
 package app
 
 import (
+	"bytes"
+	"fmt"
 	"os/exec"
 	"syscall"
+
+	log "github.com/sirupsen/logrus"
 )
 
 func PrepareBackgroundCommand(cmd *exec.Cmd) {
@@ -14,11 +18,9 @@ func PrepareBackgroundCommand(cmd *exec.Cmd) {
 
 // 同步执行命令,但是是使用的cmd /c的形式
 func RunCommandWithEnv(commands string) (stdout string, stderr string, exitCode int) {
-	log.Debug("run command:", commands)
+	log.Debugf("run command:", commands)
 
-	var cmd *exec.Cmd
-
-	cmd = exec.Command("cmd.exe")
+	cmd := exec.Command("cmd.exe")
 	//核心点,直接修改执行命令方式
 	cmd.SysProcAttr = &syscall.SysProcAttr{CmdLine: fmt.Sprintf(`/c %s`, commands)}
 
