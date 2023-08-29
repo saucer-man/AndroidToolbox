@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"regexp"
 	"strings"
 
@@ -37,7 +38,7 @@ func (a *App) GetDeviceList() []string {
 	out, _, _ := RunCommand("adb", "devices", "-l")
 
 	var devices []string
-	log.Debug("adb devices命令返回结果: %s", out)
+	log.Debugf("adb devices命令返回结果: %s", out)
 	sc := bufio.NewScanner(strings.NewReader(out))
 	for sc.Scan() {
 		line := sc.Text()
@@ -46,7 +47,7 @@ func (a *App) GetDeviceList() []string {
 			devices = append(devices, id[0])
 		}
 	}
-	log.Debug("adb devices命令返回结果: %s", devices)
+	log.Debugf("adb devices命令返回结果: %s", devices)
 	return devices
 }
 
@@ -95,12 +96,12 @@ func (a *App) GetDeviceProp(deviceid string) DevicePropList {
 	// }
 
 	out, err, _ := RunCommand("adb", "-s", deviceid, "shell", "getprop")
-	log.Debug("adb getprop命令返回错误结果: %s", err)
+	log.Debugf("adb getprop命令返回错误结果: %s", err)
 
 	for _, propName := range propAttitudeOrderedMap.Keys() {
 
 		propMean, _ := propAttitudeOrderedMap.Get(propName)
-		log.Debug("propName: %s", propName)
+		log.Debugf("propName: %s", propName)
 		if err != "" {
 			res.DevicePropList = append(res.DevicePropList, DeviceProp{propName, "", propMean})
 			continue
@@ -120,13 +121,14 @@ func (a *App) GetDeviceProp(deviceid string) DevicePropList {
 
 		}
 	}
-	log.Info("adb getprop命令返回结果: %s", res)
+	log.Infof("adb getprop命令返回结果: %s", res)
 
 	return res
 }
 
 // 同步执行命令
 func (a *App) Excute(commands []string) ExcuteResult {
+	log.Infof("将要执行%+v", commands)
 	excuteResult := ExcuteResult{
 		Stdout:   "",
 		Stderr:   "",
@@ -149,7 +151,24 @@ func (a *App) Excute(commands []string) ExcuteResult {
 		return excuteResult
 	}
 	stdout, stderr, exitCode := RunCommand(command, args...)
+	log.Debugf("执行结果为,stdout:%+v, stderr:%+v, exitCode:%+v", stdout, stderr, exitCode)
+	excuteResult.Stdout = stdout
+	excuteResult.Stderr = stderr
+	excuteResult.ExitCode = exitCode
+	return excuteResult
+}
 
+// 同步执行命令, 但是是使用的cmd /c的形式
+func (a *App) ExcuteWithEnv(commands string) ExcuteResult {
+	log.Infof("将要执行%+v", commands)
+	excuteResult := ExcuteResult{
+		Stdout:   "",
+		Stderr:   "",
+		ExitCode: 0,
+	}
+
+	stdout, stderr, exitCode := RunCommandWithEnv(commands)
+	log.Debugf("执行结果为,stdout:%+v, stderr:%+v, exitCode:%+v", stdout, stderr, exitCode)
 	excuteResult.Stdout = stdout
 	excuteResult.Stderr = stderr
 	excuteResult.ExitCode = exitCode
@@ -299,8 +318,8 @@ func (a *App) UploadFile(deviceid string, dir string) ExcuteResult {
 		ExitCode: 0,
 	}
 	toUploadFilePath, err := runtime.OpenFileDialog(a.ctx, runtime.OpenDialogOptions{
-		DefaultDirectory: "C://",
-		Title:            "选择将要上传的文件",
+		// DefaultDirectory: "C://",
+		Title: "选择将要上传的文件",
 	})
 	log.Infof("选择了一个文件:%+v", toUploadFilePath)
 	if err != nil {
@@ -313,8 +332,10 @@ func (a *App) UploadFile(deviceid string, dir string) ExcuteResult {
 		excuteResult.ExitCode = -1
 		return excuteResult
 	}
+	// toSaveFileName := filepath.Base(toUploadFilePath)
+	// toSavePath := filepath.Join(dir, toSaveFileName)
 
-	return a.Excute([]string{"adb", "-s", deviceid, "push", toUploadFilePath, dir})
+	return a.ExcuteWithEnv(fmt.Sprintf("adb -s %s push \"%s\" \"%s\"", deviceid, toUploadFilePath, dir))
 }
 
 func (a *App) DownloadFile(deviceid string, filePath string) ExcuteResult {
@@ -324,8 +345,8 @@ func (a *App) DownloadFile(deviceid string, filePath string) ExcuteResult {
 		ExitCode: 0,
 	}
 	toSaveDir, err := runtime.OpenDirectoryDialog(a.ctx, runtime.OpenDialogOptions{
-		DefaultDirectory: "C://",
-		Title:            "选择将要保存的文件位置",
+		// DefaultDirectory: "C://",
+		Title: "选择将要保存的文件位置",
 	})
 	log.Infof("选择了一个目录:%+v", toSaveDir)
 	if err != nil {
@@ -338,8 +359,10 @@ func (a *App) DownloadFile(deviceid string, filePath string) ExcuteResult {
 		excuteResult.ExitCode = -1
 		return excuteResult
 	}
+	toSaveFileName := filepath.Base(filePath)
+	toSavePath := filepath.Join(toSaveDir, toSaveFileName)
 
-	return a.Excute([]string{"adb", "-s", deviceid, "pull", filePath, toSaveDir})
+	return a.ExcuteWithEnv(fmt.Sprintf("adb -s %s pull  \"%s\" \"%s\"", deviceid, filePath, toSavePath))
 }
 
 func (a *App) InstallPackage(deviceid string) ExcuteResult {
@@ -349,8 +372,8 @@ func (a *App) InstallPackage(deviceid string) ExcuteResult {
 		ExitCode: 0,
 	}
 	toInstallFilePath, err := runtime.OpenFileDialog(a.ctx, runtime.OpenDialogOptions{
-		DefaultDirectory: "C://",
-		Title:            "选择将要安装的apk",
+		// DefaultDirectory: "C://",
+		Title: "选择将要安装的apk",
 	})
 	log.Infof("选择了一个apk:%+v", toInstallFilePath)
 	if err != nil {

@@ -14,6 +14,10 @@ export function ExcuteSync(arg1) {
   return window['go']['app']['App']['ExcuteSync'](arg1);
 }
 
+export function ExcuteWithEnv(arg1) {
+  return window['go']['app']['App']['ExcuteWithEnv'](arg1);
+}
+
 export function GetCurrentActivity(arg1) {
   return window['go']['app']['App']['GetCurrentActivity'](arg1);
 }

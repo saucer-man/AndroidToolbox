@@ -8,6 +8,8 @@ export function Excute(arg1:Array<string>):Promise<app.ExcuteResult>;
 
 export function ExcuteSync(arg1:Array<string>):Promise<app.ExcuteResult>;
 
+export function ExcuteWithEnv(arg1:string):Promise<app.ExcuteResult>;
+
 export function GetCurrentActivity(arg1:string):Promise<app.Actitity>;
 
 export function GetDeviceList():Promise<Array<string>>;
