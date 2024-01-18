@@ -151,7 +151,7 @@ func (a *App) Excute(commands []string) ExcuteResult {
 		return excuteResult
 	}
 	stdout, stderr, exitCode := RunCommand(command, args...)
-	log.Debugf("执行结果为,stdout:%+v, stderr:%+v, exitCode:%+v", stdout, stderr, exitCode)
+	log.Infof("执行结果为,stdout:%+v, stderr:%+v, exitCode:%+v", stdout, stderr, exitCode)
 	excuteResult.Stdout = stdout
 	excuteResult.Stderr = stderr
 	excuteResult.ExitCode = exitCode
@@ -332,10 +332,10 @@ func (a *App) UploadFile(deviceid string, dir string) ExcuteResult {
 		excuteResult.ExitCode = -1
 		return excuteResult
 	}
-	// toSaveFileName := filepath.Base(toUploadFilePath)
-	// toSavePath := filepath.Join(dir, toSaveFileName)
+	toSaveFileName := filepath.Base(toUploadFilePath)
+	toSavePath := strings.ReplaceAll(filepath.Join(dir, toSaveFileName), "\\", "/") // 在手机上的路径无法使用\\，必须使用/
 
-	return a.ExcuteWithEnv(fmt.Sprintf("adb -s %s push \"%s\" \"%s\"", deviceid, toUploadFilePath, dir))
+	return a.Excute([]string{"adb", "-s", deviceid, "push", toUploadFilePath, toSavePath})
 }
 
 func (a *App) DownloadFile(deviceid string, filePath string) ExcuteResult {
@@ -362,7 +362,8 @@ func (a *App) DownloadFile(deviceid string, filePath string) ExcuteResult {
 	toSaveFileName := filepath.Base(filePath)
 	toSavePath := filepath.Join(toSaveDir, toSaveFileName)
 
-	return a.ExcuteWithEnv(fmt.Sprintf("adb -s %s pull  \"%s\" \"%s\"", deviceid, filePath, toSavePath))
+	return a.Excute([]string{"adb", "-s", deviceid, "pull", filePath, toSavePath})
+
 }
 
 func (a *App) InstallPackage(deviceid string) ExcuteResult {

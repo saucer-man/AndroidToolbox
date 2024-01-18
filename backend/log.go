@@ -5,5 +5,6 @@ import (
 )
 
 func init() {
+	log.SetReportCaller(true)
 	log.SetLevel(log.InfoLevel)
 }

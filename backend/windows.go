@@ -18,7 +18,7 @@ func PrepareBackgroundCommand(cmd *exec.Cmd) {
 
 // 同步执行命令,但是是使用的cmd /c的形式
 func RunCommandWithEnv(commands string) (stdout string, stderr string, exitCode int) {
-	log.Debugf("run command:", commands)
+	log.Info("run command:", commands)
 
 	cmd := exec.Command("cmd.exe")
 	//核心点,直接修改执行命令方式
